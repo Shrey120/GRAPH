@@ -1,0 +1,88 @@
+In a town, there are n people labeled from 1 to n. There is a rumor that one of these people is secretly the town judge.
+
+If the town judge exists, then:
+
+The town judge trusts nobody.
+Everybody (except for the town judge) trusts the town judge.
+There is exactly one person that satisfies properties 1 and 2.
+You are given an array trust where trust[i] = [ai, bi] representing that the person labeled ai trusts the person labeled bi.
+
+Return the label of the town judge if the town judge exists and can be identified, or return -1 otherwise.
+
+ 
+
+Example 1:
+
+Input: n = 2, trust = [[1,2]]
+Output: 2
+Example 2:
+
+Input: n = 3, trust = [[1,3],[2,3]]
+Output: 3
+Example 3:
+
+Input: n = 3, trust = [[1,3],[2,3],[3,1]]
+Output: -1
+
+
+SOL 1 :::: USING MAP
+
+class Solution {
+public:
+    int findJudge(int n, vector<vector<int>>& trust) 
+    {
+       map<int , int > m;
+if(n==1) return 1;
+map<int , int >x;
+for(int i=0 ; i<trust.size() ; i++)
+{
+    m[trust[i][0]]++;
+}
+for(int i=0 ; i<trust.size() ; i++)
+{
+    x[trust[i][1]]++;
+}
+for(int i= 0 ; i<=n ; i++)
+{
+    if(m[i]==0&&x[i]==n-1)
+         return i;
+}
+        return -1;
+    }
+};
+
+SOL 2 :::: USING INDEGREE AND OUTDEGREE
+
+int findJudge(int n, vector<vector<int>>& trust) {
+        //this condition is to check if given input is empty but n==1
+		
+		if(trust.empty() && n==1)
+            return 1;
+		
+		//counts outdegree of a person or node 
+		//outdegree means number of nodes that are trusted by given specific node 
+        
+		vector<int> out(n+1,0);
+		
+		//counts indegree of a person or node 
+		//indegree means number of nodes that trusts a given specific node
+        
+		vector<int> in(n+1,0);
+		
+		//loop counts indegree and outdegree
+        
+		for(auto edge : trust){
+            out[edge[0]]++;
+            in[edge[1]]++;
+        }
+		
+		//if a node has outdegree==0 that means that node doesnot trust anyone and
+		//indegree ==n-1 that means all other nodes trusts this node except himself
+        
+		for(int i=0;i<=n;i++){
+            if(out[i]==0 && in[i]==n-1)
+                return i;
+        }
+		//if there is no such node return -1
+        return -1;
+    }
