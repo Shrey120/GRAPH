@@ -1,0 +1,67 @@
+ Average of Levels in Binary Tree
+
+Given the root of a binary tree, return the average value of the nodes on each level in the form of an array. Answers within 10-5 of the actual answer will be accepted.
+ 
+
+Example 1:
+
+
+Input: root = [3,9,20,null,null,15,7]
+Output: [3.00000,14.50000,11.00000]
+Explanation: The average value of nodes on level 0 is 3, on level 1 is 14.5, and on level 2 is 11.
+Hence return [3, 14.5, 11].
+Example 2:
+
+
+Input: root = [3,9,20,15,7]
+Output: [3.00000,14.50000,11.00000]
+
+SOL 1:: DFS
+
+void dfs(TreeNode* root, int level, vector<int> &elements, vector<double> &average){
+        if(root==nullptr) return;
+        if(elements.size()<=level){            // If we are visiting this level first time
+            elements.push_back(0);             // initilize elements at this level as 0
+            average.push_back(0.0);            // initilize average till now as 0.0
+        }
+        elements[level] += 1;     // Increment the number of elements at this level
+        average[level] = ((average[level] * (elements[level] - 1)) + root->val) / elements[level];
+		
+		// Calculating average by using previous average and previous number of elements
+		// prev sum = prev average * prev number of elements
+		// new average = (prev sum + curr node value) / new number of elements
+		
+		// dfs calls for unvisited nodes
+        dfs(root->left,level+1,elements,average);   
+        dfs(root->right,level+1,elements,average);
+    }
+    vector<double> averageOfLevels(TreeNode* root) {
+        vector<int> elements;
+        vector<double> average;
+        dfs(root,0,elements, average);
+        return average;
+    }
+
+SOL 2::: BFS
+
+vector<double> averageOfLevels(TreeNode* root) {
+        vector<double> v;                              // answer Vector
+        queue<TreeNode*> q;                            // BFS queue
+        q.push(root);
+        while(!q.empty()){
+            long long sum = 0;                         // Initialize sum 0 for each level
+            int num = 0;
+            for(int i=q.size();i>0;i--){
+                TreeNode* t = q.front();
+                q.pop();
+                sum += t->val;                         // Add value of each element to the sum
+                num++;                                 // Increment the count of elements
+                if(t->left) q.push(t->left);
+                if(t->right) q.push(t->right);
+            }
+            v.push_back(sum/(double)num);              //Pushing the average to the answer vector
+        }
+        return v;
+	}
+  
+  
